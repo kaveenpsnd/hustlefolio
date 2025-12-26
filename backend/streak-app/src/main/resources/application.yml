@@ -4,3 +4,52 @@ server:
 spring:
   application:
     name: streak-platform
+
+  datasource:
+    url: jdbc:postgresql://localhost:5435/streak_db
+    username: streak_dev
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: POSTGRESQL
+    show-sql: true # Helpful for debugging: prints SQL queries to console
+    hibernate:
+      ddl-auto: update # Automatically creates tables based on your Java classes
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+   # QStash Configuration
+
+
+qstash:
+  token: eyJVc2VySUQiOiJkYzk1ZjE1NS0wMjkxLTRjMmItYTY2YS00MzFlNGRmM2JiYWEiLCJQYXNzd29yZCI6IjQ5Y2IwYTQ2NjdkNjQxODJiODc3ZDI2ODA5YjRjOWEyIn0=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

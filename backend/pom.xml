@@ -20,14 +20,14 @@
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
+
     <modules>
-
             <module>streak-common</module>
-
+            <module>streak-auth</module>
             <module>streak-app</module>
-
 
     </modules>
 

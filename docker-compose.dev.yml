@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: streak_local_db
+    restart: always
+    environment:
+      POSTGRES_USER: streak_dev
+      POSTGRES_PASSWORD: password    # Make sure this says PASSWORD, not PASS
+      POSTGRES_DB: streak_db
+    ports:
+      - "5435:5432"
+    volumes:
+      # CHANGED: New folder name to force a reset
+      - ./pg-data-fresh:/var/lib/postgresql/data
