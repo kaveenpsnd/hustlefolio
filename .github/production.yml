@@ -1,0 +1,44 @@
+name: Production Build
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/hustlefolio:latest
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: root
+          password: ${{ secrets.DROPLET_PASSWORD }}
+          script: |
+            echo "Starting Fresh Deployment..."
+            docker stop hustle-app || true
+            docker rm hustle-app || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/hustlefolio:latest
+            docker run -d --name hustle-app --network hustle-net -p 8080:8080 \
+              -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/hustlefolio \
+              -e SPRING_DATASOURCE_USERNAME=postgres \
+              -e SPRING_DATASOURCE_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              ${{ secrets.DOCKER_USERNAME }}/hustlefolio:latest
