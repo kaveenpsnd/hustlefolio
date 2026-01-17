@@ -50,6 +50,10 @@ public class DemoDataLoader implements CommandLineRunner {
             for (int g = 1; g <= goalsCount; g++) {
                 Goal goal = new Goal();
                 goal.setUser(user);
+                
+                // 🛑 CRITICAL FIX: Set the username field explicitly
+                goal.setUsername(username); 
+                
                 goal.setTitle((g == 1 ? "Daily Writing" : "Morning Pages") + " - " + username);
                 int target = (g == 1) ? 7 + rand.nextInt(24) : 14 + rand.nextInt(16);
                 goal.setTargetDays(target);

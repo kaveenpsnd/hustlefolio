@@ -38,6 +38,8 @@ public class Goal {
    
    @Column(name = "freeze_count")
    private Integer freezeCount = 1;
+   @Column(name = "username", nullable = false)
+private String username;
    
    private Integer totalPoints = 0;
    private String streakStatus = "uninitiated";
