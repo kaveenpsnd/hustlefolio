@@ -3,7 +3,7 @@ import type { InternalAxiosRequestConfig } from 'axios';
 import type { APIError } from '@/types';
 
 // Base API configuration
-const BASE_URL = '/api';
+const BASE_URL = 'https://hustlefolio.live/api';
 
 // Create axios instance
 export const apiClient = axios.create({

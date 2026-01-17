@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://64.227.166.226/:path*"
+      "destination": "https://hustlefolio.live/api/:path*" 
     },
     {
       "source": "/(.*)",
