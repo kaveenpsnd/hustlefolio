@@ -16,7 +16,6 @@ import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class GoalService {
@@ -25,7 +24,7 @@ public class GoalService {
     private final GoalHistoryRepository goalHistoryRepository;
     private final UserRepository userRepository;
     private final GoalCategoryService goalCategoryService;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -34,23 +33,30 @@ public class GoalService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
         System.out.println("Found user: " + user.getUsername() + " with ID: " + user.getId());
+
         goal.setUser(user);
-        
+
+        // ✅ FIX: Explicitly set the username field to satisfy the NOT NULL database constraint
+        goal.setUsername(user.getUsername());
+
         // Set category if provided
         if (categoryId != null) {
             GoalCategory category = goalCategoryService.getCategoryById(categoryId);
             goal.setCategory(category);
         }
-        
+
         Goal savedGoal = goalRepository.save(goal);
         System.out.println("Goal saved successfully with ID: " + savedGoal.getId());
         return savedGoal;
     }
-    
+
+    // ... rest of your existing code ...
+
     // Keep the old method for backward compatibility
     public Goal createGoal(Goal goal, String username){
         return createGoal(goal, username, null);
     }
+
     public List<Goal> getAllUserGoals(String username){
         System.out.println("GoalService.getAllUserGoals called for username: " + username);
         List<Goal> goals = goalRepository.findByUser_UsernameAndActiveTrue(username);
@@ -63,26 +69,27 @@ public class GoalService {
         }
         return goals;
     }
-    
+
     public List<Goal> getCompletedUserGoals(String username){
         System.out.println("GoalService.getCompletedUserGoals called for username: " + username);
         List<Goal> goals = goalRepository.findByUser_UsernameAndActiveFalse(username);
         System.out.println("Found " + goals.size() + " completed goals for " + username);
         return goals;
     }
-    
+
     public List<Goal> getAllGoalsSortedByLatest() {
         return goalRepository.findAllByOrderByCreatedAtDesc();
     }
+
     public Goal getGoalById(Long goalId,String username){
         return goalRepository.findByIdAndUser_Username(goalId,username).orElseThrow(()-> new RuntimeException("Goal not found with id: " + goalId));
     }
-    
+
     @Transactional
     public void updateGoalCategory(Long goalId, Long categoryId, String username) {
         Goal goal = goalRepository.findByIdAndUser_Username(goalId, username)
                 .orElseThrow(() -> new RuntimeException("Goal not found for user: " + username));
-        
+
         if (categoryId != null) {
             GoalCategory category = goalCategoryService.getCategoryById(categoryId);
             goal.setCategory(category);
@@ -90,33 +97,33 @@ public class GoalService {
             System.out.println("Updated goal " + goalId + " category to: " + category.getName());
         }
     }
-    
+
     @Transactional
     public Goal updateGoal(Long goalId, String title, Integer targetDays, Long categoryId, String username) {
         Goal goal = goalRepository.findByIdAndUser_Username(goalId, username)
                 .orElseThrow(() -> new RuntimeException("Goal not found or you don't have permission to edit it"));
-        
+
         if (title != null && !title.trim().isEmpty()) {
             goal.setTitle(title);
         }
-        
+
         if (targetDays != null && targetDays > 0) {
             goal.setTargetDays(targetDays);
         }
-        
+
         if (categoryId != null) {
             GoalCategory category = goalCategoryService.getCategoryById(categoryId);
             goal.setCategory(category);
         }
-        
+
         return goalRepository.save(goal);
     }
-    
+
     @Transactional
     public void incrementStreak(Long goalId, String username) {
         System.out.println("=== INCREMENT STREAK CALLED ===");
         System.out.println("Goal ID: " + goalId + " | Username: " + username);
-        
+
         Goal activeGoal = goalRepository.findByIdAndUser_Username(goalId, username)
                 .orElseThrow(() -> new RuntimeException("Active goal not found for user: " + username));
 
@@ -124,13 +131,13 @@ public class GoalService {
         System.out.println("Current Streak BEFORE: " + activeGoal.getCurrentStreak());
         System.out.println("Target Days: " + activeGoal.getTargetDays());
         System.out.println("Total Points BEFORE: " + activeGoal.getTotalPoints());
-        
+
         int baseXP = 10;
         int streakMultiplier = 5;
 
         LocalDate today = LocalDate.now();
         LocalDate lastUpdate = activeGoal.getLastUpdatedDate();
-        
+
         System.out.println("Today: " + today);
         System.out.println("Last Update: " + lastUpdate);
 
@@ -228,16 +235,17 @@ public class GoalService {
         System.out.println("Total Points AFTER: " + activeGoal.getTotalPoints());
         System.out.println("Streak Status: " + activeGoal.getStreakStatus());
         System.out.println("Active: " + activeGoal.isActive());
-        
+
         Goal savedGoal = goalRepository.save(activeGoal);
         entityManager.flush(); // Force immediate database write
         entityManager.refresh(savedGoal); // Refresh from database to confirm
-        
+
         System.out.println("=== GOAL SAVED SUCCESSFULLY ===");
         System.out.println("Saved - Current Streak: " + savedGoal.getCurrentStreak());
         System.out.println("Saved - Total Points: " + savedGoal.getTotalPoints());
         System.out.println("============================");
     }
+
     public void deleteGoal(Long id, String username) {
         // Check if the goal exists and belongs to the user
         Goal goal = goalRepository.findByIdAndUser_Username(id, username)
@@ -262,6 +270,5 @@ public class GoalService {
                 .filter(date -> !date.isBefore(sevenDaysAgo))
                 .count();
     }
-
 
 }
