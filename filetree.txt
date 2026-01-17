@@ -1,0 +1,126 @@
+STREAK-BLOG/
+├── .git/
+├── .github/
+├── .gitignore
+├── .idea/
+├── .vscode/
+│   └── settings.json
+├── apply-created-at-migration.ps1
+├── backend/
+│   ├── pom.xml
+│   ├── streak-app/
+│   ├── streak-auth/
+│   └── streak-common/
+├── data-migration.sql
+├── docker-compose.dev.yml
+├── fix-dashboard-data.ps1
+├── fix-dashboard.bat
+├── FIXES-APPLIED.ps1
+├── frontend/
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── node_modules/  (collapsed - many packages)
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── public/
+│   │   ├── Hustlelog.png
+│   │   └── vite.svg
+│   ├── README.md
+│   ├── src/
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── features/
+│   │   ├── hooks/
+│   │   ├── index.css
+│   │   ├── lib/
+│   │   ├── main.tsx
+│   │   └── types/
+│   ├── tailwind.config.js
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── migration.sql
+├── pg-data-fresh/  (Postgres data directory - collapsed)
+│   ├── base/
+│   ├── global/
+│   ├── pg_commit_ts/
+│   ├── pg_dynshmem/
+│   ├── pg_hba.conf
+│   ├── pg_ident.conf
+│   ├── pg_logical/
+│   ├── pg_multixact/
+│   ├── pg_notify/
+│   ├── pg_replslot/
+│   ├── pg_serial/
+│   ├── pg_snapshots/
+│   ├── pg_stat/
+│   ├── pg_stat_tmp/
+│   ├── pg_subtrans/
+│   ├── pg_tblspc/
+│   ├── pg_twophase/
+│   ├── PG_VERSION
+│   ├── pg_wal/
+│   ├── pg_xact/
+│   ├── postgresql.auto.conf
+│   ├── postgresql.conf
+│   └── postmaster.opts
+├── postgres-data/  (Postgres data directory - collapsed)
+│   ├── base/
+│   ├── global/
+│   ├── pg_commit_ts/
+│   ├── pg_dynshmem/
+│   ├── pg_hba.conf
+│   ├── pg_ident.conf
+│   ├── pg_logical/
+│   ├── pg_multixact/
+│   ├── pg_notify/
+│   ├── pg_replslot/
+│   ├── pg_serial/
+│   ├── pg_snapshots/
+│   ├── pg_stat/
+│   ├── pg_stat_tmp/
+│   ├── pg_subtrans/
+│   ├── pg_tblspc/
+│   ├── pg_twophase/
+│   ├── PG_VERSION
+│   ├── pg_wal/
+│   ├── pg_xact/
+│   ├── postgresql.auto.conf
+│   ├── postgresql.conf
+│   └── postmaster.opts
+├── README.md
+├── start-app.bat
+├── uploads/
+│   ├── 029534aa-9286-4362-a999-46f8c3da5542_neww.png
+│   ├── 02a058aa-7cba-4b02-898f-527b11373453_qq.png
+│   ├── 077e1b6b-9e52-484c-aad7-13f15a75fd69_qq.png
+│   ├── 0c738059-6e0a-4aa0-afcc-a8b84b8fd6b2_Sri Lanka Wallpaper.jpg
+│   ├── 1833a579-4dae-4c24-ae69-8a13e6c6384f_Boy 2.png
+│   ├── 277282b1-4ed9-434b-826b-1f8a28d4a5ec_Black And White Aesthetic Minimalist Modern Simple Typography Coconut Cosmetics Logo (2).png
+│   ├── 37996986-2df5-4966-b962-2a2ddf601f41_neww.png
+│   ├── 42a34fa3-5a92-4fb0-9df5-3691687dbb98_qq.png
+│   ├── 48f85428-fa83-4b31-9e76-7e97b27efc37_qq.png
+│   ├── 50b86f7d-8e20-4fb1-89e9-4e7ebe8628ab_images.jfif
+│   ├── 57e829f5-d89c-4b6e-a0f2-a5c62fdfeae7_Black And White Aesthetic Minimalist Modern Simple Typography Coconut Cosmetics Logo (2).png
+│   ├── 71e2e50e-2ae4-42bb-9d4e-4437bfae5c4c_qq.png
+│   ├── 7a5c9f01-cc4b-4310-b493-6706e97077f8_Apple Mac mini M4 .png
+│   ├── 88a1d4a9-95f2-4d8c-9d44-ef1a05aba5f3_Amazon Fire 7 Kids Tablet .png
+│   ├── a1da3dd4-8b05-4366-8a7d-ff2cdc351d8b_qq.png
+│   ├── ab44e35f-52bb-411b-ab8a-2bd1f800fdb3_Apple Mac mini M4 .png
+│   ├── ce6e7ecd-eb83-41e8-a99d-21b9f4bb81b1_Amazon Fire 7 Kids Tablet .png
+│   ├── eb823dc6-d6eb-43af-891b-c517e1e104fe_Apple Mac mini M4 .png
+│   ├── f0f77dc4-7114-473b-9be9-2f20bbeaf846_images.jfif
+│   ├── profile_0046188d-37a1-4324-9ca5-84d79239f649.png
+│   └── profile_06b3d8ec-1a45-4916-954a-ce39055208db.jfif
+└── verify-fixes.ps1
+
+Remaining SQL files at project root:
+- migration.sql
+- data-migration.sql
+
+(End of tree)

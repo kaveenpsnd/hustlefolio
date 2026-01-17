@@ -21,6 +21,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 
     @Override
+    @SuppressWarnings("NullableProblems")
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain)
@@ -31,21 +32,34 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
 
+        // Wrap JWT extraction in try-catch to handle expired/invalid tokens gracefully
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
-        }
-
-        // --- MOVE THIS LOGIC UP ---
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (jwtUtil.validateToken(jwt, username)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        username, null, new ArrayList<>());
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                // Log the error but don't block the request
+                System.out.println("JWT extraction failed: " + e.getMessage());
+                // Token is invalid, but we continue - Spring Security will handle authorization
             }
         }
 
+        // Only set authentication if token is valid
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                if (jwtUtil.validateToken(jwt, username)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            username, null, new ArrayList<>());
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (Exception e) {
+                // Log the error but don't block the request
+                System.out.println("JWT validation failed: " + e.getMessage());
+                // Token is invalid, but we continue - Spring Security will handle authorization
+            }
+        }
 
         chain.doFilter(request, response);
-    }}
+    }
+}

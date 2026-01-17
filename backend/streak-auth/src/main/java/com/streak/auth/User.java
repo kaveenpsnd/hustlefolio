@@ -14,11 +14,13 @@ import java.time.LocalDateTime;
 @Table(name = "users") // "users" because "user" is a reserved keyword in SQL
 public class User {
 
-@Id
+    @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    
     @Column(nullable = false, unique = true)
     private String username;
+    
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -26,7 +28,21 @@ public class User {
     private String password;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-
-
+    
+    // Profile fields
+    private String fullName;
+    
+    @Column(length = 1000)
+    private String bio;
+    
+    private String profilePictureUrl;
+    
+    private String websiteUrl;
+    
+    private String githubUsername;
+    
+    private String twitterUsername;
+    
+    private String linkedinUrl;
 
 }

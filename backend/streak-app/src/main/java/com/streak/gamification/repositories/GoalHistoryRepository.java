@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface GoalHistoryRepository extends JpaRepository<GoalHistory, Long> {
     List<GoalHistory> findByUsernameOrderByCompletedDateDesc(String username);
-    List<Goal> findAllByActiveTrue();
+
 }
 
