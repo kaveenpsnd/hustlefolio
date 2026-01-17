@@ -1,4 +1,4 @@
-name: Build and Deploy to DigitalOcean
+name: Production Build
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -19,7 +18,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: ./backend
@@ -27,30 +26,18 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/hustlefolio:latest
 
-      - name: Deploy to DigitalOcean Droplet
+      - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: root
           password: ${{ secrets.DROPLET_PASSWORD }}
           script: |
-            echo "Starting Deployment..."
-            
-            # Login to Docker Hub on the server
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-            
-            # Stop the old container
+            echo "Starting Fresh Deployment..."
             docker stop hustle-app || true
             docker rm hustle-app || true
-            
-            # Pull the new version
             docker pull ${{ secrets.DOCKER_USERNAME }}/hustlefolio:latest
-            
-            # Run the new version
-            docker run -d \
-              --name hustle-app \
-              --network hustle-net \
-              -p 8080:8080 \
+            docker run -d --name hustle-app --network hustle-net -p 8080:8080 \
               -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/hustlefolio \
               -e SPRING_DATASOURCE_USERNAME=postgres \
               -e SPRING_DATASOURCE_PASSWORD='${{ secrets.DB_PASSWORD }}' \
