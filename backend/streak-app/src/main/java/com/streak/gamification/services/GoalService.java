@@ -36,7 +36,6 @@ public class GoalService {
 
         goal.setUser(user);
 
-        // ✅ FIX: Explicitly set the username field to satisfy the NOT NULL database constraint
         goal.setUsername(user.getUsername());
 
         // Set category if provided

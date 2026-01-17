@@ -1,5 +1,5 @@
 package com.streak.posts.controller;
-
+import java.security.Principal;
 import com.streak.posts.entities.Post;
 import com.streak.posts.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
+    public ResponseEntity<Post> createPost(@RequestBody Post post, Principal principal) {
         // Get username from authenticated user (JWT token)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
@@ -26,7 +26,7 @@ public class PostController {
         // Override the authorUsername with the authenticated user's username for security
         post.setAuthorUsername(authenticatedUsername);
 
-        return ResponseEntity.ok(postService.createPost(post));
+        return ResponseEntity.ok(postService.createPost(post, principal.getName()));
     }
     @GetMapping
     public ResponseEntity<List<Post>> getAllPosts(){
