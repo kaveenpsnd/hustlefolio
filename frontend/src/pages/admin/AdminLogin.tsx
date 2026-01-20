@@ -55,12 +55,15 @@ export default function AdminLogin() {
             login(userData);
 
             // 5. Check Role and Redirect
-            if (userData.role === 'ADMIN') {
+            // 5. Check Role and Redirect
+            const finalRole = response.data.role || userData.role || 'USER';
+            // console.log("Login Debug:", { username, finalRole, responseRole: response.data.role, tokenRole: userData.role });
+
+            if (finalRole === 'ADMIN') {
                 navigate(from, { replace: true });
             } else {
-                setError('Access Denied: You do not have administrator privileges.');
+                setError(`Access Denied: Role is '${finalRole}'. Expected 'ADMIN'.`);
                 tokenManager.clear();
-                // Force reload to clear state if cleaner logout needed, or just let them stay logged out
             }
 
         } catch (err: any) {
