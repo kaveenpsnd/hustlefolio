@@ -47,9 +47,15 @@ apiClient.interceptors.request.use(
     ];
 
     // Check if this is a public endpoint
-    const isPublicEndpoint = publicEndpointPatterns.some(pattern => 
+    const isPublicEndpoint = publicEndpointPatterns.some(pattern =>
       config.url?.includes(pattern)
     );
+
+    console.log(`[API Debug] Request to: ${config.url}`, {
+      isPublicEndpoint,
+      tokenExists: !!tokenManager.get(),
+      matches: publicEndpointPatterns.filter(p => config.url?.includes(p))
+    });
 
     // Only add token for protected endpoints
     if (!isPublicEndpoint) {
@@ -57,8 +63,11 @@ apiClient.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+    } else {
+      // Explicitly remove it just in case it crept in
+      delete config.headers.Authorization;
     }
-    
+
     return config;
   },
   (error) => {
