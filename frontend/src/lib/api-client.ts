@@ -33,16 +33,32 @@ export const tokenManager = {
 // Request interceptor - Inject JWT token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Don't add token to auth endpoints (login/register)
-    const isAuthEndpoint = config.url?.includes('/api/auth/login') ||
-      config.url?.includes('/api/auth/register');
+    // List of public endpoints that don't need authentication
+    // These endpoints are marked as permitAll() in the backend
+    const publicEndpointPatterns = [
+      '/api/auth/',              // Auth endpoints (login, register)
+      '/api/posts/public/',      // Public posts
+      '/api/goals/public/',      // Public goals
+      '/api/categories',         // Categories (GET)
+      '/api/tags',               // Tags (GET)
+      '/api/goal-categories',    // Goal categories (GET)
+      '/api/images/',            // Images (GET)
+      '/api/users/',             // User profiles (GET)
+    ];
 
-    if (!isAuthEndpoint) {
+    // Check if this is a public endpoint
+    const isPublicEndpoint = publicEndpointPatterns.some(pattern => 
+      config.url?.includes(pattern)
+    );
+
+    // Only add token for protected endpoints
+    if (!isPublicEndpoint) {
       const token = tokenManager.get();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+    
     return config;
   },
   (error) => {
