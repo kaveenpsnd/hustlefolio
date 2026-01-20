@@ -22,25 +22,43 @@ public class AdminController {
     private final GoalService goalService;
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getGlobalStats() {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalUsers", userService.getUserCount());
-        stats.put("totalPosts", postService.getAllPosts().size());
-        stats.put("totalGoals", goalService.getGoalCount());
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<?> getGlobalStats() {
+        System.out.println("AdminController: Stats requested");
+        try {
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("totalUsers", userService.getUserCount());
+            stats.put("totalPosts", postService.getAllPosts().size());
+            stats.put("totalGoals", goalService.getGoalCount());
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error fetching stats: " + e.getMessage());
+        }
     }
 
     // --- User Management ---
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserProfileResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<?> getAllUsers() {
+        System.out.println("AdminController: User list requested");
+        try {
+            return ResponseEntity.ok(userService.getAllUsers());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error fetching users: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUserById(id);
-        return ResponseEntity.ok("User deleted successfully");
+        System.out.println("AdminController: Delete user requested for " + id);
+        try {
+            userService.deleteUserById(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error deleting user: " + e.getMessage());
+        }
     }
 
     // --- Content Management ---
