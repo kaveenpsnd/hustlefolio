@@ -31,15 +31,18 @@ public class AuthConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
+        // Use setAllowedOriginPatterns instead of setAllowedOrigins for better
+        // compatibility
+        configuration.setAllowedOriginPatterns(Arrays.asList(
                 "https://hustlefolio.live",
                 "https://www.hustlefolio.live",
-                "http://localhost:5173",
-                "http://localhost:3000"));
+                "https://*.vercel.app",
+                "http://localhost:*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
