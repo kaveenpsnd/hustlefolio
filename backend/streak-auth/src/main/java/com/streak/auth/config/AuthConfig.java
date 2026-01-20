@@ -66,6 +66,7 @@ public class AuthConfig {
                         // 1. PUBLIC AUTH PATHS
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/auth/debug/**").permitAll()
+                        .requestMatchers("/api/cleanup/**").permitAll()
 
                         // 2. IMAGE ENDPOINTS (shared uploads/ folder)
                         // Public: viewing all images (GET) - both post and profile images
