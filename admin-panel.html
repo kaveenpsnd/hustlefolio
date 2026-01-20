@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        .secret-input {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto 0;
+            display: block;
+            text-align: center;
+        }
+        .secret-input::placeholder { color: rgba(255,255,255,0.6); }
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+        }
+        .tab:hover { background: #e0e0e0; }
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        .content {
+            padding: 30px;
+            display: none;
+        }
+        .content.active { display: block; }
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4); }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .data-table tr:hover { background: #f9f9f9; }
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .delete-btn:hover { background: #ff3838; }
+        .status {
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card h3 { font-size: 2em; margin-bottom: 5px; }
+        .stat-card p { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Admin Control Panel</h1>
+            <p>Direct Database Management</p>
+            <input type="password" class="secret-input" id="secretKey" placeholder="Enter Admin Secret Key" value="SUPER_ADMIN_SECRET_2026">
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('users')">👥 Users</button>
+            <button class="tab" onclick="switchTab('posts')">📝 Posts</button>
+            <button class="tab" onclick="switchTab('goals')">🎯 Goals</button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="content active">
+            <div class="actions">
+                <button class="btn-primary" onclick="loadUsers()">🔄 Refresh Users</button>
+            </div>
+            <div id="usersStatus" class="status"></div>
+            <div id="usersData"></div>
+        </div>
+
+        <!-- Posts Tab -->
+        <div id="posts" class="content">
+            <div class="actions">
+                <button class="btn-primary" onclick="loadPosts()">🔄 Refresh Posts</button>
+            </div>
+            <div id="postsStatus" class="status"></div>
+            <div id="postsData"></div>
+        </div>
+
+        <!-- Goals Tab -->
+        <div id="goals" class="content">
+            <div class="actions">
+                <button class="btn-primary" onclick="loadGoals()">🔄 Refresh Goals</button>
+            </div>
+            <div id="goalsStatus" class="status"></div>
+            <div id="goalsData"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.hustlefolio.live';
+        
+        function getSecret() {
+            return document.getElementById('secretKey').value;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function showStatus(section, message, isError = false) {
+            const statusEl = document.getElementById(section + 'Status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + (isError ? 'error' : 'success');
+            setTimeout(() => statusEl.style.display = 'none', 5000);
+        }
+
+        function showLoading(section) {
+            document.getElementById(section + 'Data').innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+        }
+
+        // Load Users
+        async function loadUsers() {
+            showLoading('users');
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users`, {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('streak_auth_token') }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load users');
+                
+                const users = await response.json();
+                
+                let html = '<table class="data-table"><thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+                
+                users.forEach(user => {
+                    html += `<tr>
+                        <td>${user.id}</td>
+                        <td><strong>${user.username}</strong></td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td><span style="background: ${user.role === 'ADMIN' ? '#ffd700' : '#e0e0e0'}; padding: 4px 8px; border-radius: 4px;">${user.role}</span></td>
+                        <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                        <td><button class="delete-btn" onclick="deleteUser(${user.id}, '${user.username}')">🗑️ Delete</button></td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table>';
+                document.getElementById('usersData').innerHTML = html;
+                showStatus('users', `✅ Loaded ${users.length} users`);
+            } catch (error) {
+                document.getElementById('usersData').innerHTML = '<p style="color: red;">Error loading users</p>';
+                showStatus('users', '❌ ' + error.message, true);
+            }
+        }
+
+        async function deleteUser(id, username) {
+            if (!confirm(`Delete user "${username}"? This will also delete all their posts and goals!`)) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/cleanup/posts/all-by-user?username=${username}&secret=${getSecret()}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('Failed to delete user posts');
+                
+                const response2 = await fetch(`${API_BASE}/api/admin/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('streak_auth_token') }
+                });
+                
+                if (!response2.ok) throw new Error('Failed to delete user');
+                
+                showStatus('users', `✅ User "${username}" deleted successfully`);
+                loadUsers();
+            } catch (error) {
+                showStatus('users', '❌ ' + error.message, true);
+            }
+        }
+
+        // Load Posts
+        async function loadPosts() {
+            showLoading('posts');
+            try {
+                const response = await fetch(`${API_BASE}/api/posts/all`);
+                
+                if (!response.ok) throw new Error('Failed to load posts');
+                
+                const posts = await response.json();
+                
+                let html = '<table class="data-table"><thead><tr><th>ID</th><th>Title</th><th>Author</th><th>Goal ID</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+                
+                posts.forEach(post => {
+                    html += `<tr>
+                        <td>${post.id}</td>
+                        <td><strong>${post.title || 'Untitled'}</strong></td>
+                        <td>${post.authorUsername}</td>
+                        <td>${post.goalId || 'N/A'}</td>
+                        <td>${new Date(post.createdAt).toLocaleDateString()}</td>
+                        <td><button class="delete-btn" onclick="deletePost(${post.id})">🗑️ Delete</button></td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table>';
+                document.getElementById('postsData').innerHTML = html;
+                showStatus('posts', `✅ Loaded ${posts.length} posts`);
+            } catch (error) {
+                document.getElementById('postsData').innerHTML = '<p style="color: red;">Error loading posts</p>';
+                showStatus('posts', '❌ ' + error.message, true);
+            }
+        }
+
+        async function deletePost(id) {
+            if (!confirm(`Delete post #${id}?`)) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/cleanup/posts/${id}?secret=${getSecret()}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('Failed to delete post');
+                
+                showStatus('posts', `✅ Post #${id} deleted successfully`);
+                loadPosts();
+            } catch (error) {
+                showStatus('posts', '❌ ' + error.message, true);
+            }
+        }
+
+        // Load Goals
+        async function loadGoals() {
+            showLoading('goals');
+            try {
+                // Note: You'll need to create a public endpoint for goals or use the cleanup endpoint
+                const response = await fetch(`${API_BASE}/api/goals/all`);
+                
+                if (!response.ok) throw new Error('Failed to load goals');
+                
+                const goals = await response.json();
+                
+                let html = '<table class="data-table"><thead><tr><th>ID</th><th>Title</th><th>User ID</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+                
+                goals.forEach(goal => {
+                    html += `<tr>
+                        <td>${goal.id}</td>
+                        <td><strong>${goal.title}</strong></td>
+                        <td>${goal.userId}</td>
+                        <td>${goal.status || 'Active'}</td>
+                        <td>${new Date(goal.createdAt).toLocaleDateString()}</td>
+                        <td><button class="delete-btn" onclick="deleteGoal(${goal.id})">🗑️ Delete</button></td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table>';
+                document.getElementById('goalsData').innerHTML = html;
+                showStatus('goals', `✅ Loaded ${goals.length} goals`);
+            } catch (error) {
+                document.getElementById('goalsData').innerHTML = '<p style="color: red;">Error loading goals. You may need to add a public endpoint.</p>';
+                showStatus('goals', '❌ ' + error.message, true);
+            }
+        }
+
+        async function deleteGoal(id) {
+            if (!confirm(`Delete goal #${id}?`)) return;
+            
+            try {
+                // You'll need to add this endpoint to CleanupController
+                const response = await fetch(`${API_BASE}/api/cleanup/goals/${id}?secret=${getSecret()}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('Failed to delete goal');
+                
+                showStatus('goals', `✅ Goal #${id} deleted successfully`);
+                loadGoals();
+            } catch (error) {
+                showStatus('goals', '❌ ' + error.message, true);
+            }
+        }
+
+        // Auto-load users on page load
+        window.onload = () => loadUsers();
+    </script>
+</body>
+</html>
