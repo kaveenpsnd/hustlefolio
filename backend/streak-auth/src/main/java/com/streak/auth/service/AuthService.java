@@ -50,47 +50,14 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
+        System.out.println("User logged in successfully: " + username);
         // Handle null role for legacy users (Default to USER)
         if (user.getRole() == null) {
-            System.out.println("⚠️ WARNING: User " + username + " has NULL role, defaulting to USER");
             user.setRole(com.streak.auth.Role.USER);
             userRepository.save(user);
         }
 
-        System.out.println("=== LOGIN DEBUG ===");
-        System.out.println("Username: " + username);
-        System.out.println("DB Role: " + user.getRole());
-        System.out.println("Generating token with role: " + user.getRole().toString());
-
         String token = jwtUtil.generateToken(username, user.getRole().toString());
-
-        System.out.println("Token generated successfully");
-        System.out.println("Response role: " + user.getRole().toString());
-        System.out.println("==================");
-
         return new AuthResponse(token, username, user.getRole().toString());
-    }
-
-    /**
-     * Temporary method to promote a user to ADMIN
-     */
-    public void promoteToAdmin(String username, String secret) {
-        if (!"SUPER_ADMIN_SECRET_2026".equals(secret)) {
-            throw new RuntimeException("Invalid admin secret");
-        }
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        System.out.println("=== PROMOTION DEBUG ===");
-        System.out.println("Username: " + username);
-        System.out.println("Current role: " + user.getRole());
-
-        user.setRole(com.streak.auth.Role.ADMIN);
-        User savedUser = userRepository.save(user);
-
-        System.out.println("New role: " + savedUser.getRole());
-        System.out.println("✅ User promoted to ADMIN successfully");
-        System.out.println("⚠️ IMPORTANT: User must LOG OUT and LOG IN again for changes to take effect!");
-        System.out.println("======================");
     }
 }

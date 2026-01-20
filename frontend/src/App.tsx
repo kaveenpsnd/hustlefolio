@@ -15,14 +15,6 @@ import ProfilePage from '@/features/users/ProfilePage';
 import PublicProfilePage from '@/features/profile/PublicProfilePage';
 import ExplorePage from '@/features/explore/ExplorePage';
 
-// Admin Pages
-// Admin Pages
-import AdminLayout from '@/layouts/AdminLayout';
-import AdminLogin from '@/pages/admin/AdminLogin';
-import AdminDashboard from '@/pages/admin/Dashboard';
-import UserManagement from '@/pages/admin/UserManagement';
-import EmergencyCleanup from '@/pages/admin/EmergencyCleanup';
-
 function App() {
   return (
     <QueryProvider>
@@ -37,16 +29,6 @@ function App() {
             <Route path="/explore" element={<ExplorePage />} />
             <Route path="/u/:username" element={<PublicProfilePage />} />
             <Route path="/posts/:id" element={<PostViewer />} />
-
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/emergency-cleanup" element={<EmergencyCleanup />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="users" element={<UserManagement />} />
-              {/* Default redirect to dashboard */}
-              <Route index element={<Navigate to="dashboard" replace />} />
-            </Route>
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>

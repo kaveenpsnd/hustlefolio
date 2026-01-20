@@ -36,12 +36,4 @@ public class AuthController {
                 loginRequest.getPassword()));
     }
 
-    @PostMapping("/promote-admin")
-    public ResponseEntity<String> promoteToAdmin(@RequestBody java.util.Map<String, String> request) {
-        String username = request.get("username");
-        String secret = request.get("secret");
-        authService.promoteToAdmin(username, secret);
-        return ResponseEntity.ok("User promoted to ADMIN successfully. Please re-login to update permissions.");
-    }
-
 }

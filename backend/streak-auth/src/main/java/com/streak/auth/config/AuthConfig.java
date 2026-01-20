@@ -60,13 +60,8 @@ public class AuthConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 0. ADMIN ENDPOINTS
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                         // 1. PUBLIC AUTH PATHS
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/auth/debug/**").permitAll()
-                        .requestMatchers("/api/cleanup/**").permitAll()
 
                         // 2. IMAGE ENDPOINTS (shared uploads/ folder)
                         // Public: viewing all images (GET) - both post and profile images
@@ -101,11 +96,6 @@ public class AuthConfig {
 
                         // 7. CATCH-ALL
                         .anyRequest().authenticated());
-
-        // Explicitly fix for CORS Preflight
-        // Sometimes .cors() is not enough if the request matches a secured path
-        // but isn't flagged as CORS by Spring Security correctly.
-        // This ensures all OPTIONS requests are allowed.
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
