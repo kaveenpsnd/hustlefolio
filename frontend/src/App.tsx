@@ -16,10 +16,12 @@ import PublicProfilePage from '@/features/profile/PublicProfilePage';
 import ExplorePage from '@/features/explore/ExplorePage';
 
 // Admin Pages
+// Admin Pages
 import AdminLayout from '@/layouts/AdminLayout';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import UserManagement from '@/pages/admin/UserManagement';
+import EmergencyCleanup from '@/pages/admin/EmergencyCleanup';
 
 function App() {
   return (
@@ -38,6 +40,7 @@ function App() {
 
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/emergency-cleanup" element={<EmergencyCleanup />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<UserManagement />} />
