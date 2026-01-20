@@ -44,19 +44,26 @@ apiClient.interceptors.request.use(
       '/api/categories',         // Categories (GET)
       '/api/tags',               // Tags (GET)
       '/api/goal-categories',    // Goal categories (GET)
-      '/api/images/',            // Images (GET)
       '/api/users/',             // User profiles (GET)
     ];
 
     // Check if this is a public endpoint
-    const isPublicEndpoint = publicEndpointPatterns.some(pattern =>
+    let isPublicEndpoint = publicEndpointPatterns.some(pattern =>
       config.url?.includes(pattern)
     );
 
-    console.log(`[API Debug] Request to: ${config.url}`, {
+    // Special handling for images: Public only for GET, Protected for POST (upload)
+    if (config.url?.includes('/api/images/')) {
+      // Default to GET if method is undefined
+      const method = config.method?.toLowerCase() || 'get';
+      if (method === 'get') {
+        isPublicEndpoint = true;
+      }
+    }
+
+    console.log(`[API Debug] Request to: ${config.url} (${config.method})`, {
       isPublicEndpoint,
-      tokenExists: !!tokenManager.get(),
-      matches: publicEndpointPatterns.filter(p => config.url?.includes(p))
+      tokenExists: !!tokenManager.get()
     });
 
     // Only add token for protected endpoints
