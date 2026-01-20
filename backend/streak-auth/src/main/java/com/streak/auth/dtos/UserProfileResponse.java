@@ -20,4 +20,5 @@ public class UserProfileResponse {
     private String twitterUsername;
     private String linkedinUrl;
     private LocalDateTime createdAt;
+    private String role;
 }

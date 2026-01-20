@@ -19,12 +19,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-
     @Override
     @SuppressWarnings("NullableProblems")
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain)
+            HttpServletResponse response,
+            FilterChain chain)
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
@@ -48,8 +47,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 if (jwtUtil.validateToken(jwt, username)) {
+                    String role = jwtUtil.extractRole(jwt);
+                    java.util.List<org.springframework.security.core.authority.SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+                    if (role != null) {
+                        // Ensure role has ROLE_ prefix if Spring expects it (usually strictly needed
+                        // for .hasRole())
+                        // But if my Enum is USER/ADMIN, and I use hasRole("ADMIN"), Spring adds ROLE_
+                        // automatically.
+                        // So I should validly add "ROLE_" + role.
+                        authorities.add(
+                                new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role));
+                    }
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            username, null, new ArrayList<>());
+                            username, null, authorities);
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }

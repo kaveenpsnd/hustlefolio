@@ -20,13 +20,13 @@ import java.sql.PreparedStatement;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    
+
     @Autowired(required = false)
     private DataSource dataSource;
-    
+
     /**
      * Get user profile by username
      */
@@ -35,7 +35,7 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
         return mapToProfileResponse(user);
     }
-    
+
     /**
      * Update user profile
      */
@@ -43,7 +43,7 @@ public class UserService {
     public UserProfileResponse updateProfile(String username, UpdateProfileRequest request) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        
+
         // Update fields
         if (request.getFullName() != null) {
             user.setFullName(request.getFullName());
@@ -63,11 +63,11 @@ public class UserService {
         if (request.getLinkedinUrl() != null) {
             user.setLinkedinUrl(request.getLinkedinUrl());
         }
-        
+
         User savedUser = userRepository.save(user);
         return mapToProfileResponse(savedUser);
     }
-    
+
     /**
      * Update profile picture URL
      */
@@ -75,12 +75,12 @@ public class UserService {
     public UserProfileResponse updateProfilePicture(String username, String profilePictureUrl) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        
+
         user.setProfilePictureUrl(profilePictureUrl);
         User savedUser = userRepository.save(user);
         return mapToProfileResponse(savedUser);
     }
-    
+
     /**
      * Change password
      */
@@ -88,17 +88,17 @@ public class UserService {
     public void changePassword(String username, ChangePasswordRequest request) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        
+
         // Verify current password
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
-        
+
         // Update to new password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
-    
+
     /**
      * Delete user account and all related data (posts, goals, streaks)
      */
@@ -106,7 +106,7 @@ public class UserService {
     public void deleteAccount(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        
+
         try {
             // Use direct SQL to delete related data to avoid circular dependencies
             if (dataSource != null) {
@@ -118,8 +118,8 @@ public class UserService {
                         int postsDeleted = ps.executeUpdate();
                         System.out.println("Deleted " + postsDeleted + " posts for user: " + username);
                     }
-                    
-                    // Delete all goals by this user  
+
+                    // Delete all goals by this user
                     try (PreparedStatement ps = conn.prepareStatement(
                             "DELETE FROM goals WHERE user_id = ?")) {
                         ps.setLong(1, user.getId());
@@ -131,27 +131,53 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete user data: " + e.getMessage(), e);
         }
-        
+
         // Finally, delete the user
         userRepository.delete(user);
     }
-    
+
+    /**
+     * Delete user by ID (Admin only)
+     */
+    @Transactional
+    public void deleteUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found: " + id));
+        deleteAccount(user.getUsername());
+    }
+
+    /**
+     * Get all users (Admin only)
+     */
+    public java.util.List<UserProfileResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::mapToProfileResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Get user count (Admin stats)
+     */
+    public long getUserCount() {
+        return userRepository.count();
+    }
+
     /**
      * Helper method to map User entity to UserProfileResponse
      */
     private UserProfileResponse mapToProfileResponse(User user) {
         return new UserProfileResponse(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            user.getFullName(),
-            user.getBio(),
-            user.getProfilePictureUrl(),
-            user.getWebsiteUrl(),
-            user.getGithubUsername(),
-            user.getTwitterUsername(),
-            user.getLinkedinUrl(),
-            user.getCreatedAt()
-        );
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getBio(),
+                user.getProfilePictureUrl(),
+                user.getWebsiteUrl(),
+                user.getGithubUsername(),
+                user.getTwitterUsername(),
+                user.getLinkedinUrl(),
+                user.getCreatedAt(),
+                user.getRole() != null ? user.getRole().toString() : "USER");
     }
 }

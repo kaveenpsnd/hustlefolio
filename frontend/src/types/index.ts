@@ -15,6 +15,7 @@ export interface User {
   twitterUsername?: string;
   linkedinUrl?: string;
   createdAt: string;
+  role?: string;
 }
 
 export interface UserProfileResponse {
@@ -29,7 +30,9 @@ export interface UserProfileResponse {
   twitterUsername?: string;
   linkedinUrl?: string;
   createdAt: string;
+  role?: string;
 }
+
 
 export interface UpdateProfileRequest {
   fullName?: string;
@@ -48,6 +51,7 @@ export interface ChangePasswordRequest {
 export interface AuthResponse {
   token: string;
   username: string;
+  role?: string; // Backend provides this
   user?: User; // Constructed on frontend
 }
 

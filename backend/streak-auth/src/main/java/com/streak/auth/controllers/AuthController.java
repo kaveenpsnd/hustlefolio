@@ -1,4 +1,5 @@
 package com.streak.auth.controllers;
+
 import com.streak.auth.dtos.AuthResponse;
 import com.streak.auth.dtos.LoginRequest;
 
@@ -21,20 +22,26 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-            return ResponseEntity.ok(authService.register(
+        return ResponseEntity.ok(authService.register(
                 registerRequest.getUsername(),
                 registerRequest.getEmail(),
-                registerRequest.getPassword()
-        ));
+                registerRequest.getPassword()));
 
     }
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.login(
                 loginRequest.getUsername(),
-                loginRequest.getPassword()
-        ));
+                loginRequest.getPassword()));
     }
 
+    @PostMapping("/promote-admin")
+    public ResponseEntity<String> promoteToAdmin(@RequestBody java.util.Map<String, String> request) {
+        String username = request.get("username");
+        String secret = request.get("secret");
+        authService.promoteToAdmin(username, secret);
+        return ResponseEntity.ok("User promoted to ADMIN successfully. Please re-login to update permissions.");
+    }
 
 }

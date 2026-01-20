@@ -66,10 +66,27 @@ public class JwtUtil {
     }
 
     /**
-     * Generate JWT token for username
+     * Extract role from JWT token
+     */
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    /**
+     * Generate JWT token for username with default role (USER)
      */
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", "USER"); // Default
+        return createToken(claims, username);
+    }
+
+    /**
+     * Generate JWT token for username with specific role
+     */
+    public String generateToken(String username, String role) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
         return createToken(claims, username);
     }
 

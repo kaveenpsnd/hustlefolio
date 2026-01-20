@@ -21,25 +21,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const getUserFromToken = useCallback(() => {
     const token = tokenManager.get();
     if (!token) return null;
-    
+
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       console.log('JWT Payload:', payload);
       console.log('JWT Payload keys:', Object.keys(payload));
       console.log('JWT sub:', payload.sub);
       console.log('JWT username:', payload.username);
-      
+
       const username = payload.sub || payload.username || '';
       console.log('Extracted username:', username);
       console.log('Username type:', typeof username);
       console.log('Username length:', username?.length);
-      
+
       if (username) {
         return {
           id: payload.userId || payload.id || 0,
           username: username,
           email: payload.email || '',
           createdAt: new Date().toISOString(),
+          role: payload.role || 'USER',
         };
       }
     } catch (error) {

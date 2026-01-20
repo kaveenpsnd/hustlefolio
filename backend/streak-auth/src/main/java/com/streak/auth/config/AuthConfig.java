@@ -59,6 +59,9 @@ public class AuthConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // 0. ADMIN ENDPOINTS
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         // 1. PUBLIC AUTH PATHS
                         .requestMatchers("/api/auth/**").permitAll()
 
