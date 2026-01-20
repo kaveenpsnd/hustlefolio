@@ -4,7 +4,9 @@ import type { APIError } from '@/types';
 
 // Base API configuration
 // ✅ Point to the new API subdomain
-const BASE_URL = 'https://api.hustlefolio.live/api';
+// Base API configuration
+// ✅ Point to the new API subdomain
+const BASE_URL = 'https://api.hustlefolio.live';
 
 // Create axios instance
 export const apiClient = axios.create({
