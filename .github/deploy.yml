@@ -51,6 +51,7 @@ jobs:
               --name hustle-app \
               --network hustle-net \
               -p 8080:8080 \
+              -v /root/streak-data/uploads:/app/uploads \
               -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/hustlefolio \
               -e SPRING_DATASOURCE_USERNAME=postgres \
               -e SPRING_DATASOURCE_PASSWORD='${{ secrets.DB_PASSWORD }}' \
