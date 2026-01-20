@@ -33,7 +33,7 @@ export default function AdminLogin() {
 
         try {
             // 1. Call API
-            const response = await apiClient.post('/auth/login', { username, password });
+            const response = await apiClient.post('/api/auth/login', { username, password });
             const { token } = response.data;
 
             // 2. Set Token
