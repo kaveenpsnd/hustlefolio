@@ -16,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/profile")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173", "http://localhost:5174"})
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173", "http://localhost:5174" })
 public class ProfileImageController {
 
     private final com.streak.auth.service.FileStorageService fileStorageService;
@@ -30,28 +30,28 @@ public class ProfileImageController {
     @PostMapping(value = "/upload-picture", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadProfilePicture(
             @RequestPart("file") MultipartFile file) {
-        
+
         // Validate file is an image
         if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "File must be an image");
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        
+
         // Validate file size (max 5MB)
         if (file.getSize() > 5 * 1024 * 1024) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "File size must not exceed 5MB");
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        
+
         // Save file and return URL (uses shared uploads/ folder with profile_ prefix)
         String filename = fileStorageService.saveProfilePicture(file);
-        String fileUrl = "http://localhost:8080/api/images/" + filename;
-        
+        String fileUrl = "/api/images/" + filename;
+
         Map<String, String> response = new HashMap<>();
         response.put("url", fileUrl);
-        
+
         return ResponseEntity.ok(response);
     }
 }
