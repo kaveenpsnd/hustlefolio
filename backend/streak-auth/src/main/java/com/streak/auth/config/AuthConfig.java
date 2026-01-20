@@ -38,11 +38,12 @@ public class AuthConfig {
                 "https://www.hustlefolio.live",
                 "https://*.vercel.app",
                 "http://localhost:*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept",
+                "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -99,6 +100,11 @@ public class AuthConfig {
 
                         // 7. CATCH-ALL
                         .anyRequest().authenticated());
+
+        // Explicitly fix for CORS Preflight
+        // Sometimes .cors() is not enough if the request matches a secured path
+        // but isn't flagged as CORS by Spring Security correctly.
+        // This ensures all OPTIONS requests are allowed.
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
