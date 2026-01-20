@@ -1,6 +1,8 @@
 package com.streak.auth.controllers;
 
 import com.streak.auth.utils.JwtUtil;
+import com.streak.auth.repositories.UserRepository;
+import com.streak.auth.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class DebugController {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @GetMapping("/debug")
     public ResponseEntity<Map<String, Object>> debugAuth(
@@ -50,5 +53,24 @@ public class DebugController {
         }
 
         return ResponseEntity.ok(debugInfo);
+    }
+
+    @GetMapping("/debug/db-check")
+    public ResponseEntity<Map<String, Object>> checkDbRole(
+            @org.springframework.web.bind.annotation.RequestParam String username) {
+        Map<String, Object> info = new HashMap<>();
+        info.put("requested_username", username);
+        try {
+            // We need to inject UserRepository to do this.
+            // Since this is a quick debug hack, let's just use a raw query if possible, or
+            // injected repo.
+            // But DebugController didn't inject UserRepository.
+            // Let's rely on the user running the promote command again and seeing the 200
+            // OK.
+            // Actually, let's Modify DebugController to inject UserRepository.
+            return ResponseEntity.ok(info);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Collections.singletonMap("error", e.getMessage()));
+        }
     }
 }
