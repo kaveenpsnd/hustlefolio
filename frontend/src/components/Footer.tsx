@@ -1,10 +1,10 @@
 export default function Footer() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 bg-black text-white py-3 sm:py-4 z-40">
+    <footer className="bg-black text-white py-3 sm:py-4 w-full mt-auto">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="text-center space-y-1">
           <p className="text-xs sm:text-sm text-white font-medium">
-            © {new Date().getFullYear()} hustlefolio.co - All rights reserved
+            © {new Date().getFullYear()} hustlefolio.live All Rights Reserved
           </p>
           <p className="text-xs sm:text-sm">
             <a
