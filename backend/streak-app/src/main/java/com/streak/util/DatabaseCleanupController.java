@@ -1,4 +1,4 @@
-package com.streak.auth.controllers;
+package com.streak.util;
 
 import com.streak.auth.repositories.UserRepository;
 import com.streak.posts.repositories.PostRepository;
