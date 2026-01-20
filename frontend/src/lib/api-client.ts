@@ -3,7 +3,8 @@ import type { InternalAxiosRequestConfig } from 'axios';
 import type { APIError } from '@/types';
 
 // Base API configuration
-const BASE_URL = 'https://hustlefolio.live/api';
+// ✅ Point to the new API subdomain
+const BASE_URL = 'https://api.hustlefolio.live/api';
 
 // Create axios instance
 export const apiClient = axios.create({
@@ -33,9 +34,9 @@ export const tokenManager = {
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Don't add token to auth endpoints (login/register)
-    const isAuthEndpoint = config.url?.includes('/api/auth/login') || 
-                          config.url?.includes('/api/auth/register');
-    
+    const isAuthEndpoint = config.url?.includes('/api/auth/login') ||
+      config.url?.includes('/api/auth/register');
+
     if (!isAuthEndpoint) {
       const token = tokenManager.get();
       if (token) {
@@ -66,7 +67,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       console.error('401 Unauthorized - clearing token and redirecting to login');
       tokenManager.clear();
-      
+
       // Only redirect if not already on login/register page
       if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
         window.location.href = '/login';

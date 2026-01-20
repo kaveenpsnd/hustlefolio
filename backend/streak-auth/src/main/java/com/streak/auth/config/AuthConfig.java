@@ -31,7 +31,11 @@ public class AuthConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173", "http://localhost:5174","https://hustlefolio.vercel.app","http://64.227.166.226"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://hustlefolio.live",
+                "https://www.hustlefolio.live",
+                "http://localhost:5173",
+                "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -50,8 +54,7 @@ public class AuthConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // 1. PUBLIC AUTH PATHS
                         .requestMatchers("/api/auth/**").permitAll()
@@ -86,17 +89,15 @@ public class AuthConfig {
                         .requestMatchers("/api/categories/**").authenticated()
                         .requestMatchers("/api/tags/**").authenticated()
                         .requestMatchers("/api/goal-categories/**").authenticated()
-                        
+
                         // 7. CATCH-ALL
-                        .anyRequest().authenticated()
-                );
+                        .anyRequest().authenticated());
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }
 }
 
-//kaveenps2
-//kaveenps2@kaveen
+// kaveenps2
+// kaveenps2@kaveen
