@@ -3,7 +3,7 @@ package com.streak.admin.controller;
 import com.streak.auth.dtos.UserProfileResponse;
 import com.streak.auth.service.UserService;
 import com.streak.posts.service.PostService;
-import com.streak.gamification.service.GoalService;
+import com.streak.gamification.services.GoalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +19,14 @@ public class AdminController {
 
     private final UserService userService;
     private final PostService postService;
-    // GoalService might need to be verified for existence/package
-    // Assuming standard package structure based on 'gamification' directory viewed
-    // earlier.
+    private final GoalService goalService;
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getGlobalStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalUsers", userService.getUserCount());
         stats.put("totalPosts", postService.getAllPosts().size());
-        // stats.put("totalGoals", goalService.getAllGoals().size()); // Add back when
-        // confirmed
+        stats.put("totalGoals", goalService.getGoalCount());
         return ResponseEntity.ok(stats);
     }
 

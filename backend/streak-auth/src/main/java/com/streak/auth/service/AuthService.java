@@ -73,3 +73,4 @@ public class AuthService {
         user.setRole(com.streak.auth.Role.ADMIN);
         userRepository.save(user);
     }
+}

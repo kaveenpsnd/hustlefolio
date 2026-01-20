@@ -28,7 +28,7 @@ public class GoalService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Goal createGoal(Goal goal, String username, Long categoryId){
+    public Goal createGoal(Goal goal, String username, Long categoryId) {
         System.out.println("Looking up user: " + username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
@@ -52,11 +52,11 @@ public class GoalService {
     // ... rest of your existing code ...
 
     // Keep the old method for backward compatibility
-    public Goal createGoal(Goal goal, String username){
+    public Goal createGoal(Goal goal, String username) {
         return createGoal(goal, username, null);
     }
 
-    public List<Goal> getAllUserGoals(String username){
+    public List<Goal> getAllUserGoals(String username) {
         System.out.println("GoalService.getAllUserGoals called for username: " + username);
         List<Goal> goals = goalRepository.findByUser_UsernameAndActiveTrue(username);
         System.out.println("Found " + goals.size() + " active goals for " + username);
@@ -69,7 +69,7 @@ public class GoalService {
         return goals;
     }
 
-    public List<Goal> getCompletedUserGoals(String username){
+    public List<Goal> getCompletedUserGoals(String username) {
         System.out.println("GoalService.getCompletedUserGoals called for username: " + username);
         List<Goal> goals = goalRepository.findByUser_UsernameAndActiveFalse(username);
         System.out.println("Found " + goals.size() + " completed goals for " + username);
@@ -80,8 +80,9 @@ public class GoalService {
         return goalRepository.findAllByOrderByCreatedAtDesc();
     }
 
-    public Goal getGoalById(Long goalId,String username){
-        return goalRepository.findByIdAndUser_Username(goalId,username).orElseThrow(()-> new RuntimeException("Goal not found with id: " + goalId));
+    public Goal getGoalById(Long goalId, String username) {
+        return goalRepository.findByIdAndUser_Username(goalId, username)
+                .orElseThrow(() -> new RuntimeException("Goal not found with id: " + goalId));
     }
 
     @Transactional
@@ -196,7 +197,6 @@ public class GoalService {
         System.out.println("XP Earned for " + username + ": " + pointsEarned);
         System.out.println("XP Earned for " + username + ": " + pointsEarned + " | New Status: " + newStatus);
 
-
         activeGoal.setLastUpdatedDate(today);
 
         // 3. Completion Check - Mark as completed when target is reached
@@ -211,9 +211,10 @@ public class GoalService {
             history.setTitle(activeGoal.getTitle() + " [" + newStatus + "]");
             history.setCompletedDate(today);
             goalHistoryRepository.save(history);
-            System.out.println("🎉 CHAMPION! " + username + " completed their goal '" + activeGoal.getTitle() + "' as a " + newStatus);
+            System.out.println("🎉 CHAMPION! " + username + " completed their goal '" + activeGoal.getTitle()
+                    + "' as a " + newStatus);
         }
-        //update longest streak
+        // update longest streak
         if (activeGoal.getLongestStreak() == null || activeGoal.getCurrentStreak() > activeGoal.getLongestStreak()) {
             activeGoal.setLongestStreak(activeGoal.getCurrentStreak());
             System.out.println(" New Personal Best for " + username + ": " + activeGoal.getLongestStreak());
@@ -224,7 +225,7 @@ public class GoalService {
             System.out.println(" MONTHLY REWARD: +1 Streak Freeze earned for " + username);
         }
 
-        //heatmap calendar
+        // heatmap calendar
         if (!activeGoal.getCheckinDates().contains(today)) {
             activeGoal.getCheckinDates().add(today);
         }
@@ -252,22 +253,33 @@ public class GoalService {
 
         goalRepository.delete(goal);
     }
+
     public int getXPToNextRank(int currentPoints) {
-        if (currentPoints < 100) return 100 - currentPoints;   // To Novice
-        if (currentPoints < 500) return 500 - currentPoints;   // To Consistent
-        if (currentPoints < 1000) return 1000 - currentPoints; // To Legendary
+        if (currentPoints < 100)
+            return 100 - currentPoints; // To Novice
+        if (currentPoints < 500)
+            return 500 - currentPoints; // To Consistent
+        if (currentPoints < 1000)
+            return 1000 - currentPoints; // To Legendary
         return 0; // Already Legendary
     }
+
     public double calculateCompletionPercentage(int currentStreak, int targetDays) {
-        if (targetDays <= 0) return 0.0;
+        if (targetDays <= 0)
+            return 0.0;
         double progress = ((double) currentStreak / targetDays) * 100;
         return Math.round(progress * 100.0) / 100.0; // Rounds to 2 decimal places
     }
+
     public long getRecentActivityCount(Goal activeGoal) {
         LocalDate sevenDaysAgo = LocalDate.now().minusDays(7);
         return activeGoal.getCheckinDates().stream()
                 .filter(date -> !date.isBefore(sevenDaysAgo))
                 .count();
+    }
+
+    public long getGoalCount() {
+        return goalRepository.count();
     }
 
 }
