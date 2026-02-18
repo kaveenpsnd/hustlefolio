@@ -885,47 +885,8 @@ curl http://localhost:8080/ping
 - Never use `ddl-auto: create` or `create-drop` in production
 - Use `ddl-auto: validate` in production
 
----
 
-## 📞 Context for LLM Continuation
-
-**Situation:** This project was guided by Gemini LLM and the chat was deleted. Development needs to continue from the current state.
-
-**Current State Summary:**
-- Multi-module Spring Boot application with basic structure
-- User registration and login API implemented
-- Database integration working
-- Spring Security configured
-- **JWT token generation and validation NOT IMPLEMENTED**
-- No proper error handling or validation
-
-**Immediate Priority:**
-Complete the JWT authentication flow by implementing `JwtUtil` methods, creating JWT filter, and modifying auth responses to return tokens instead of user objects.
-
-**Prompt to Continue with New LLM:**
-> "I have a Spring Boot 3.2.0 multi-module project for a blog platform. The authentication module is partially complete with user registration/login, but JWT token generation is not implemented. The `JwtUtil` class has only the SECRET_KEY defined. I need to:
-> 1. Complete the JWT token generation and validation
-> 2. Create a JWT filter for request authentication  
-> 3. Modify login/register to return JWT tokens
-> 4. Add proper error handling
-> 
-> Please help me complete the JWT implementation step by step."
-
----
-
-## 📝 License
-
-*[Add your license information here]*
-
----
-
-## 👥 Contributors
-
-*[Add contributor information here]*
-
----
 
 **Last Updated:** December 17, 2025  
-**Project Status:** In Development (Authentication Phase)  
-**Completion:** ~40% (Core structure ready, JWT implementation pending)
+
 
