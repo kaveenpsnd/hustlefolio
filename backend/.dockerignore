@@ -1,0 +1,8 @@
+target/
+.git/
+.idea/
+.vscode/
+uploads/
+postgres-data/
+pg-data-fresh/
+**/*.class
